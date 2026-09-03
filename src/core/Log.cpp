@@ -7,11 +7,11 @@
 #include <cstdio>
 #include <memory>
 
-namespace logger {
+namespace gb::logger {
 
-std::atomic<Level> g_level{Level::Info};
-std::atomic<spdlog::logger*> g_logger{nullptr};
-std::shared_ptr<spdlog::logger> g_owner;
+static std::atomic<Level> g_level{Level::Info};
+static std::atomic<spdlog::logger*> g_logger{nullptr};
+static std::shared_ptr<spdlog::logger> g_owner;
 
 namespace {
 
@@ -86,4 +86,4 @@ void write(Level lvl, std::string_view msg) noexcept {
     }
 }
 
-}  // namespace logger
+}  // namespace gb::logger

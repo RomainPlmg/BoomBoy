@@ -2,6 +2,8 @@
 
 #include <cstdint>
 
+namespace gb {
+
 class Timer {
    public:
     Timer() = default;
@@ -26,3 +28,5 @@ class Timer {
     uint64_t m_frame = 0;
     float m_scale = 1.f;
 };
+
+}  // namespace gb

@@ -2,8 +2,11 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <cstring>
 #include <span>
 #include <stdexcept>
+
+namespace gb {
 
 // Little Endian
 inline uint32_t readU32(std::span<const std::byte> data, size_t offset) {
@@ -79,3 +82,5 @@ inline uint16_t readU16BE(std::span<const std::byte> data, std::size_t offset) {
 inline int16_t readI16BE(std::span<const std::byte> data, std::size_t offset) {
     return static_cast<std::int16_t>(readU16BE(data, offset));
 }
+
+}  // namespace gb

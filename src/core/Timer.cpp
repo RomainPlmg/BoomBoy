@@ -2,6 +2,8 @@
 
 #include <chrono>
 
+namespace gb {
+
 namespace {
 
 uint64_t now() {
@@ -28,3 +30,5 @@ void Timer::tick() {
     m_last = t;
     m_frame++;
 }
+
+}  // namespace gb
