@@ -54,17 +54,27 @@ std::expected<RomFile, RomFile::LoadError> RomFile::load(const std::filesystem::
     }
 
     if (checksum != cartridge.m_header.checksum) {
-        LOG_WARN("Header checksum mismatch! Calculated: 0x{:02X}, Header: 0x{:02X}", checksum,
+        LOG_WARN("Header checksum mismatch! Calculated: 0x{:02X}, Header: 0x{:02X}.", checksum,
                  cartridge.m_header.checksum);
     }
 
+    if (cartridge.m_header.ramSize >= cart::RAM_CAPACITY.size()) {
+        LOG_ERROR("Invalid RAM size code 0x{:02X}.", cartridge.m_header.ramSize);
+        return std::unexpected(LoadError::FileInvalid);
+    }
+
+    if (const size_t romSizeInBytes = (32 << cartridge.m_header.romSize) * 0x400;
+        cartridge.data().size() != romSizeInBytes) {
+        LOG_WARN("ROM size mismatch: header says {} bytes, file has {}.", romSizeInBytes, cartridge.data().size());
+    }
+
     LOG_INFO("ROM file loaded:");
-    LOG_INFO("\tTitle:        {}", cartridge.m_header.titleStr());
-    LOG_INFO("\tType:         {}", cartridge.m_header.typeStr());
-    LOG_INFO("\tROM Size:     {} KiB", 32 << cartridge.m_header.romSize);
-    LOG_INFO("\tRAM Size:     {}", cartridge.m_header.ramSizeStr());
-    LOG_INFO("\tROM Version:  {}", cartridge.m_header.version);
-    LOG_INFO("\tChecksum:     0x{:02X} ({})", cartridge.m_header.checksum,
+    LOG_INFO("\tTitle:        {},", cartridge.m_header.titleStr());
+    LOG_INFO("\tType:         {},", cartridge.m_header.typeStr());
+    LOG_INFO("\tROM Size:     {} KiB,", 32 << cartridge.m_header.romSize);
+    LOG_INFO("\tRAM Size:     {},", cartridge.m_header.ramSizeStr());
+    LOG_INFO("\tROM Version:  {},", cartridge.m_header.version);
+    LOG_INFO("\tChecksum:     0x{:02X} ({}).", cartridge.m_header.checksum,
              (checksum == cartridge.m_header.checksum) ? "PASS" : "FAIL");
 
     return cartridge;

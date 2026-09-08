@@ -16,9 +16,9 @@ class Cartridge {
     static std::expected<Cartridge, CreateError> create(RomFile&& romFile);
 
    private:
-    Cartridge() = default;
+    Cartridge(const RomHeader& header, std::unique_ptr<cart::MBC> mbc);
 
-    RomHeader m_header;
+    RomHeader m_header{};
     std::unique_ptr<cart::MBC> m_mbc;
 };
 
