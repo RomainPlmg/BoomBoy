@@ -44,8 +44,6 @@ target_link_libraries(BoomBoy PRIVATE gb_core gb_cartridge gb_emulator)
 # Tests
 # ============================================================================
 if(GB_DOWNLOAD_TEST_ROMS)
-    include(FetchContent)
-
     FetchContent_Declare(
             mooneye
             URL https://gekkio.fi/files/mooneye-test-suite/mts-20260714-0944-31510e1/mts-20260714-0944-31510e1.tar.gz

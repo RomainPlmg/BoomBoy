@@ -1,8 +1,9 @@
 #include "Cartridge.hpp"
-#include "cartridge/RomFile.hpp"
-#include "core/Log.hpp"
+#include "GameBoy.hpp"
+#include "RomFile.hpp"
+#include "Log.hpp"
 
-int main(int argc, char** argv) {
+int main(const int argc, char** argv) {
     gb::logger::init();
     gb::logger::setLevel(gb::logger::Level::Trace);
 
@@ -22,6 +23,8 @@ int main(int argc, char** argv) {
         LOG_ERROR("Failed to create cartridge.");
         return EXIT_FAILURE;
     }
+
+    gb::GameBoy gameBoy(std::move(cartridgeExp.value()));
 
     return EXIT_SUCCESS;
 }
