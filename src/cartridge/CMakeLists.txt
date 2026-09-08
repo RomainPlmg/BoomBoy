@@ -3,6 +3,7 @@ add_library(gb_cartridge STATIC
         RomFile.cpp
         MBC/MBC.cpp
         MBC/NoMBC.cpp
+        MBC/MBC1.cpp
 )
 
 target_include_directories(gb_cartridge PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
