@@ -2,3 +2,4 @@
 .cache/
 **/*.gb
 .idea/
+.vscode/
