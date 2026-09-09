@@ -1,7 +1,7 @@
 #include "Cartridge.hpp"
 #include "GameBoy.hpp"
-#include "RomFile.hpp"
 #include "Log.hpp"
+#include "RomFile.hpp"
 
 int main(const int argc, char** argv) {
     gb::logger::init();

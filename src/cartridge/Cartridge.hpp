@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 
 #include "MBC/MBC.hpp"
@@ -12,6 +14,9 @@ class Cartridge {
     enum class CreateError {
         BadMBC,
     };
+
+    [[nodiscard]] std::byte read(uint16_t addr) const;
+    void write(uint16_t addr, std::byte val);
 
     static std::expected<Cartridge, CreateError> create(RomFile&& romFile);
 

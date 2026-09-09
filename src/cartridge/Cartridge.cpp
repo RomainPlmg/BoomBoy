@@ -4,6 +4,16 @@
 
 namespace gb {
 
+std::byte Cartridge::read(uint16_t addr) const {
+    if (addr <= 0x7FFF) return m_mbc->readROM(addr);
+    else return m_mbc->readRAM(addr);
+}
+
+void Cartridge::write(uint16_t addr, std::byte val) {
+    if (addr <= 0x7FFF) m_mbc->writeROM(addr, val);
+    else m_mbc->writeRAM(addr, val);
+}
+
 std::expected<Cartridge, Cartridge::CreateError> Cartridge::create(RomFile&& romFile) {
     const auto header = romFile.header();
 

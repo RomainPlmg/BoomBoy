@@ -1,4 +1,6 @@
 add_library(gb_emulator STATIC
+        Bus.cpp
+        CPU.cpp
         GameBoy.cpp
 )
 
