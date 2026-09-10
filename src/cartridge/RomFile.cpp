@@ -69,12 +69,12 @@ std::expected<RomFile, RomFile::LoadError> RomFile::load(const std::filesystem::
     }
 
     LOG_INFO("ROM file loaded:");
-    LOG_INFO("\tTitle:        {},", cartridge.m_header.titleStr());
-    LOG_INFO("\tType:         {},", cartridge.m_header.typeStr());
-    LOG_INFO("\tROM Size:     {} KiB,", 32 << cartridge.m_header.romSize);
-    LOG_INFO("\tRAM Size:     {},", cartridge.m_header.ramSizeStr());
-    LOG_INFO("\tROM Version:  {},", cartridge.m_header.version);
-    LOG_INFO("\tChecksum:     0x{:02X} ({}).", cartridge.m_header.checksum,
+    LOG_INFO("\tTitle:        {}", cartridge.m_header.titleStr());
+    LOG_INFO("\tType:         {}", cartridge.m_header.typeStr());
+    LOG_INFO("\tROM Size:     {} KiB", 32 << cartridge.m_header.romSize);
+    LOG_INFO("\tRAM Size:     {}", cartridge.m_header.ramSizeStr());
+    LOG_INFO("\tROM Version:  {}", cartridge.m_header.version);
+    LOG_INFO("\tChecksum:     0x{:02X} ({})\n", cartridge.m_header.checksum,
              (checksum == cartridge.m_header.checksum) ? "PASS" : "FAIL");
 
     return cartridge;

@@ -10,7 +10,7 @@ include(FetchContent)
 # ============================================================================
 # Options
 # ============================================================================
-option(BB_DOWNLOAD_TEST_ROMS "Download Mooneye test ROMs" OFF)
+option(BB_BUILD_TESTS "Download Mooneye test ROMs" OFF)
 
 # ============================================================================
 # C++ Configuration
@@ -43,6 +43,7 @@ target_link_libraries(BoomBoy PRIVATE gb_core gb_cartridge gb_emulator)
 # ============================================================================
 # Tests
 # ============================================================================
-if(BB_DOWNLOAD_TEST_ROMS)
+include(CTest)
+if(BB_BUILD_TESTS)
         add_subdirectory(tests)
 endif()

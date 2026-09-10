@@ -24,7 +24,6 @@ void CPU::reset() {
 
 void CPU::step() {
     m_currentOP = fetch8();
-    m_cycles++;
 }
 
 uint8_t CPU::fetch8() {

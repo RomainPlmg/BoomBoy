@@ -11,7 +11,7 @@ GameBoy::GameBoy(Cartridge&& cartridge) : m_cartridge(std::move(cartridge)), m_b
 
 uint64_t GameBoy::step() {
     m_cpu.step();
-    return m_cpu.cycles();
+    return 1;
 }
 
 }  // namespace gb
