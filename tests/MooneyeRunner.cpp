@@ -32,7 +32,9 @@ int main(const int argc, char** argv) {
 
     gb::GameBoy gameBoy(std::move(cartridgeExp.value()));
 
-    while (gameBoy.step() < MOONEYE_MAX_CYCLES) {
+    uint32_t cycles = 0;
+    while (cycles < MOONEYE_MAX_CYCLES) {
+        cycles += gameBoy.step();
         if (gameBoy.cpu().currentOP() == 0x40) {
             const auto& regs = gameBoy.cpu().regs();
             return !(regs.b == 3 && regs.c == 5 && regs.d == 8 && regs.e == 13 && regs.h == 21 && regs.l == 34);

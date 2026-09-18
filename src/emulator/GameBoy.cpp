@@ -9,9 +9,8 @@ GameBoy::GameBoy(Cartridge&& cartridge) : m_cartridge(std::move(cartridge)), m_b
     m_cpu.reset();
 }
 
-uint64_t GameBoy::step() {
-    m_cpu.step();
-    return 1;
+uint32_t GameBoy::step() {
+    return m_cpu.step();
 }
 
 }  // namespace gb

@@ -22,8 +22,12 @@ void CPU::reset() {
     LOG_INFO("CPU reseted.");
 }
 
-void CPU::step() {
+uint32_t CPU::step() {
+    const auto prevTicks = m_bus.getTicks();
     m_currentOP = fetch8();
+    execute(m_currentOP);
+
+    return static_cast<uint32_t>(m_bus.getTicks() - prevTicks);
 }
 
 uint8_t CPU::fetch8() {

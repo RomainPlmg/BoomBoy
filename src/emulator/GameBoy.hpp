@@ -14,7 +14,7 @@ class GameBoy {
    public:
     explicit GameBoy(Cartridge&& cartridge);
 
-    uint64_t step();
+    uint32_t step();
 
     [[nodiscard]] const Cartridge& cartridge() const { return m_cartridge; }
     [[nodiscard]] const CPU& cpu() const { return m_cpu; }
