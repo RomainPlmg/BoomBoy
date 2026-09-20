@@ -5,22 +5,35 @@
 
 namespace gb {
 
-class CPU;
 class Cartridge;
+class WRAM;
+class HRAM;
+class VRAM;
+class OAM;
+class SerialLink;
+class InterruptHandler;
 
 class Bus {
    public:
-    Bus(Cartridge& cartridge);
+    Bus(Cartridge& cartridge, WRAM& wram, HRAM& hram, VRAM& vram, OAM& oam, InterruptHandler& interruptHandler,
+        SerialLink& serialLink);
 
     [[nodiscard]] std::byte read(uint16_t addr);
     void write(uint16_t addr, std::byte val);
 
-    void tick(uint32_t nb); /**< T-Cycles */
-    void mTick();           /**< M-Cycles */
+    void tick(uint32_t nb);      /**< T-Cycles */
+    void mTick(uint32_t nb = 1); /**< M-Cycles */
     [[nodiscard]] uint64_t getTicks() const { return m_ticks; }
 
    private:
     Cartridge& m_cartridge;
+    WRAM& m_wram;
+    HRAM& m_hram;
+    VRAM& m_vram;
+    OAM& m_oam;
+    InterruptHandler& m_interruptHandler;
+    SerialLink& m_serialLink;
+
     uint64_t m_ticks = 0;
 };
 

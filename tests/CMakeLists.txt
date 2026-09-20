@@ -12,7 +12,7 @@ target_link_libraries(MooneyeRunner PRIVATE gb_core gb_cartridge gb_emulator)
 
 FetchContent_Declare(
         mooneye
-        URL https://gekkio.fi/files/mooneye-test-suite/mts-20260714-0944-31510e1/mts-20260714-0944-31510e1.tar.gz
+        URL file://C:/Users/X55808/Downloads/mts-20260714-0944-31510e1.tar.gz
         URL_HASH SHA256=5F0694E4E9E58441DB23FF057A5AB681870D4CFAED91267E99885936DB8E6F1D
         DOWNLOAD_EXTRACT_TIMESTAMP TRUE
 )

@@ -1,9 +1,12 @@
 ﻿#include <cstdint>
+#include <iostream>
 
 #include "Cartridge.hpp"
 #include "GameBoy.hpp"
 #include "Log.hpp"
 #include "RomFile.hpp"
+
+constexpr uint64_t BLARGG_MAX_CYCLES = 200'000'000;
 
 int main(const int argc, char** argv) {
     gb::logger::init();
@@ -29,6 +32,22 @@ int main(const int argc, char** argv) {
     }
 
     gb::GameBoy gameBoy(std::move(cartridgeExp.value()));
+
+    std::string msg;
+    bool result = false;
+    gameBoy.serialLink().attachCallback([&msg, &result](char c) {
+        std::cout << c;
+        msg.push_back(c);
+        if (msg.find("Passed") != std::string::npos) result = true;
+    });
+
+    uint32_t cycles = 0;
+    while (cycles < BLARGG_MAX_CYCLES) {
+        cycles += gameBoy.step();
+        if (result) { return EXIT_SUCCESS; }
+    }
+
+    LOG_ERROR("Test timeout...");
 
     return EXIT_FAILURE;
 }

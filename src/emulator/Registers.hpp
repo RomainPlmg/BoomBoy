@@ -5,14 +5,20 @@
 
 namespace gb {
 
-struct Registers {
-    enum Flags {
-        ZERO = 0b10000000,
-        SUB = 0b01000000,
-        HALFC = 0b00100000,
-        CARRY = 0b00010000,
-    };
+enum Flags {
+    ZERO = 0b10000000,
+    SUB = 0b01000000,
+    HALFC = 0b00100000,
+    CARRY = 0b00010000,
+};
 
+enum class FlagOp : uint8_t {
+    Clear,
+    Set,
+    Keep,
+};
+
+struct Registers {
     uint8_t a, f, b, c, d, e, h, l;
     uint16_t sp, pc;
 
@@ -46,7 +52,21 @@ struct Registers {
         l = hl & 0x00FF;
     }
 
-    void setFlags(Flags flags) { f = flags & 0xF0; }
+    void setFlags(FlagOp z, FlagOp n, FlagOp h, FlagOp c) {
+        applyFlag(z, Flags::ZERO);
+        applyFlag(n, Flags::SUB);
+        applyFlag(h, Flags::HALFC);
+        applyFlag(c, Flags::CARRY);
+    }
+
+   private:
+    void applyFlag(FlagOp op, uint8_t mask) {
+        switch (op) {
+            case FlagOp::Set: f |= mask; break;
+            case FlagOp::Clear: f &= ~mask; break;
+            case FlagOp::Keep: break;
+        }
+    }
 };
 
 }  // namespace gb

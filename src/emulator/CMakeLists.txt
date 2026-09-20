@@ -4,6 +4,9 @@ add_library(gb_emulator STATIC
         GameBoy.cpp
         Instructions.cpp
         IntructionsCB.cpp
+        RAM.cpp
+        SerialLink.cpp
+        InterruptHandler.cpp
 )
 
 target_include_directories(gb_emulator PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

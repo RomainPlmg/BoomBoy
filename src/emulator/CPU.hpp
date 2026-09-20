@@ -2,6 +2,7 @@
 
 #include <cstdint>
 
+#include "InterruptHandler.hpp"
 #include "Registers.hpp"
 
 namespace gb {
@@ -49,7 +50,7 @@ class Bus;
 
 class CPU {
    public:
-    explicit CPU(Bus& bus);
+    explicit CPU(Bus& bus, InterruptHandler& interruptHandler);
 
     void reset();
     uint32_t step();
@@ -60,11 +61,21 @@ class CPU {
 
    private:
     Bus& m_bus;
+    InterruptHandler& m_interruptHandler;
     Registers m_regs;
+
     uint8_t m_currentOP = 0x00;
+    bool m_requestIMEEn = false;
+    bool m_halted = false;
+    bool m_haltBug = false;
 
     [[nodiscard]] uint8_t fetch8();
     [[nodiscard]] uint16_t fetch16();
+    [[nodiscard]] uint8_t pop8();
+    [[nodiscard]] uint16_t pop16();
+    void push8(uint8_t val);
+    void push16(uint16_t val);
+
     void execute(uint8_t opcode);
     void executeCB(uint8_t opcode);
 
@@ -79,6 +90,8 @@ class CPU {
     uint16_t readReg16(R16Mem operand);
 
     bool checkCond(Cond cond);
+
+    bool handleInterrupts();
 };
 
 }  // namespace gb

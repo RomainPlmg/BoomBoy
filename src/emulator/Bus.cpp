@@ -2,22 +2,62 @@
 
 #include "CPU.hpp"
 #include "Cartridge.hpp"
+#include "RAM.hpp"
+#include "SerialLink.hpp"
 
 namespace gb {
 
-Bus::Bus(Cartridge& cartridge) : m_cartridge(cartridge) {}
+Bus::Bus(Cartridge& cartridge, WRAM& wram, HRAM& hram, VRAM& vram, OAM& oam, InterruptHandler& interruptHandler,
+         SerialLink& serialLink)
+    : m_cartridge(cartridge),
+      m_wram(wram),
+      m_hram(hram),
+      m_vram(vram),
+      m_oam(oam),
+      m_interruptHandler(interruptHandler),
+      m_serialLink(serialLink) {}
 
 std::byte Bus::read(uint16_t addr) {
     std::byte value{0xFF};
 
-    if (addr <= 0x7FFFu || (addr >= 0xA000u && addr <= 0xBFFFu)) { value = m_cartridge.read(addr); }
+    if (addr <= 0x7FFFu || (addr >= 0xA000u && addr <= 0xBFFFu)) {
+        value = m_cartridge.read(addr);
+    } else if (addr >= 0X8000u && addr <= 0x9FFFu) {
+        value = m_vram.read(addr);
+    } else if (addr >= 0xC000u && addr <= 0xDFFFu) {
+        value = m_wram.read(addr);
+    } else if (addr >= 0xFE00u && addr <= 0xFE9Fu) {
+        value = m_oam.read(addr);
+    } else if (addr >= 0XFF01u && addr <= 0xFF02u) {
+        value = m_serialLink.read(addr);
+    } else if (addr == 0xFF0Fu || addr == 0xFFFFu) {
+        return m_interruptHandler.read(addr);
+    } else if (addr >= 0xFF80u && addr <= 0xFFFEu) {
+        value = m_hram.read(addr);
+    } else if (addr == 0xFF44u) {  // ONLY FOR GAMEBOY DOCTOR
+        return std::byte(0x90);
+    }
 
     mTick();
     return value;
 }
 
 void Bus::write(uint16_t addr, std::byte val) {
-    if (addr <= 0x7FFFu) { m_cartridge.write(addr, val); }
+    if (addr <= 0x7FFFu) {
+        m_cartridge.write(addr, val);
+    } else if (addr >= 0X8000u && addr <= 0x9FFFu) {
+        m_vram.write(addr, val);
+    } else if (addr >= 0xC000u && addr <= 0xDFFFu) {
+        m_wram.write(addr, val);
+    } else if (addr >= 0xFE00u && addr <= 0xFE9Fu) {
+        m_oam.write(addr, val);
+    } else if (addr >= 0XFF01 && addr <= 0xFF02) {
+        m_serialLink.write(addr, val);
+    } else if (addr == 0xFF0Fu || addr == 0xFFFFu) {
+        m_interruptHandler.write(addr, val);
+    } else if (addr >= 0xFF80u && addr <= 0xFFFEu) {
+        m_hram.write(addr, val);
+    }
 
     mTick();
 }
@@ -25,12 +65,15 @@ void Bus::write(uint16_t addr, std::byte val) {
 void Bus::tick(uint32_t nb) {
     for (size_t i = 0; i < nb; i++) {
         m_ticks++;
+        m_serialLink.tick();
         // PPU.tick();
         // APU.tick();
         // etc.
     }
 }
 
-void Bus::mTick() { tick(4); }
+void Bus::mTick(uint32_t nb) {
+    for (size_t i = 0; i < nb; i++) { tick(4); }
+}
 
 }  // namespace gb
