@@ -1,4 +1,4 @@
-#include "Timer.hpp"
+#include "Chrono.hpp"
 
 #include <chrono>
 
@@ -13,7 +13,7 @@ uint64_t now() {
 
 }  // namespace
 
-void Timer::tick() {
+void Chrono::tick() {
     const uint64_t t = now();
 
     // First tick

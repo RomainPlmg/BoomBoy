@@ -7,6 +7,7 @@
 #include "Cartridge.hpp"
 #include "RAM.hpp"
 #include "SerialLink.hpp"
+#include "Timer.hpp"
 
 namespace gb {
 
@@ -32,6 +33,7 @@ class GameBoy {
     OAM m_oam;
     Bus m_bus;
     InterruptHandler m_interruptHandler;
+    Timer m_timer;
     CPU m_cpu;
 };
 

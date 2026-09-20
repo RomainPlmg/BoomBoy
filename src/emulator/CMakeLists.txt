@@ -7,6 +7,7 @@ add_library(gb_emulator STATIC
         RAM.cpp
         SerialLink.cpp
         InterruptHandler.cpp
+        Timer.cpp
 )
 
 target_include_directories(gb_emulator PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

@@ -6,7 +6,7 @@
 #include "Log.hpp"
 #include "RomFile.hpp"
 
-constexpr uint64_t BLARGG_MAX_CYCLES = 200'000'000;
+constexpr uint64_t BLARGG_MAX_CYCLES = 250'000'000;
 
 int main(const int argc, char** argv) {
     gb::logger::init();

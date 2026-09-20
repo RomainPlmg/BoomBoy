@@ -12,11 +12,12 @@ class VRAM;
 class OAM;
 class SerialLink;
 class InterruptHandler;
+class Timer;
 
 class Bus {
    public:
     Bus(Cartridge& cartridge, WRAM& wram, HRAM& hram, VRAM& vram, OAM& oam, InterruptHandler& interruptHandler,
-        SerialLink& serialLink);
+        Timer& timer, SerialLink& serialLink);
 
     [[nodiscard]] std::byte read(uint16_t addr);
     void write(uint16_t addr, std::byte val);
@@ -32,6 +33,7 @@ class Bus {
     VRAM& m_vram;
     OAM& m_oam;
     InterruptHandler& m_interruptHandler;
+    Timer& m_timer;
     SerialLink& m_serialLink;
 
     uint64_t m_ticks = 0;

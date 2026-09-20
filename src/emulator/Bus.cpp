@@ -4,17 +4,19 @@
 #include "Cartridge.hpp"
 #include "RAM.hpp"
 #include "SerialLink.hpp"
+#include "Timer.hpp"
 
 namespace gb {
 
 Bus::Bus(Cartridge& cartridge, WRAM& wram, HRAM& hram, VRAM& vram, OAM& oam, InterruptHandler& interruptHandler,
-         SerialLink& serialLink)
+         Timer& timer, SerialLink& serialLink)
     : m_cartridge(cartridge),
       m_wram(wram),
       m_hram(hram),
       m_vram(vram),
       m_oam(oam),
       m_interruptHandler(interruptHandler),
+      m_timer(timer),
       m_serialLink(serialLink) {}
 
 std::byte Bus::read(uint16_t addr) {
@@ -30,12 +32,12 @@ std::byte Bus::read(uint16_t addr) {
         value = m_oam.read(addr);
     } else if (addr >= 0XFF01u && addr <= 0xFF02u) {
         value = m_serialLink.read(addr);
+    } else if (addr >= 0xFF04u && addr <= 0xFF07u) {
+        value = m_timer.read(addr);
     } else if (addr == 0xFF0Fu || addr == 0xFFFFu) {
-        return m_interruptHandler.read(addr);
+        value = m_interruptHandler.read(addr);
     } else if (addr >= 0xFF80u && addr <= 0xFFFEu) {
         value = m_hram.read(addr);
-    } else if (addr == 0xFF44u) {  // ONLY FOR GAMEBOY DOCTOR
-        return std::byte(0x90);
     }
 
     mTick();
@@ -53,6 +55,8 @@ void Bus::write(uint16_t addr, std::byte val) {
         m_oam.write(addr, val);
     } else if (addr >= 0XFF01 && addr <= 0xFF02) {
         m_serialLink.write(addr, val);
+    } else if (addr >= 0xFF04u && addr <= 0xFF07u) {
+        m_timer.write(addr, val);
     } else if (addr == 0xFF0Fu || addr == 0xFFFFu) {
         m_interruptHandler.write(addr, val);
     } else if (addr >= 0xFF80u && addr <= 0xFFFEu) {
@@ -66,6 +70,7 @@ void Bus::tick(uint32_t nb) {
     for (size_t i = 0; i < nb; i++) {
         m_ticks++;
         m_serialLink.tick();
+        m_timer.tick();
         // PPU.tick();
         // APU.tick();
         // etc.

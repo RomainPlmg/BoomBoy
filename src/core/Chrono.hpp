@@ -4,9 +4,9 @@
 
 namespace gb {
 
-class Timer {
+class Chrono {
    public:
-    Timer() = default;
+    Chrono() = default;
 
     void tick();
 
