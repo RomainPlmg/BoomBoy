@@ -37,8 +37,9 @@ target_include_directories(BoomBoy PRIVATE ${PROJECT_SOURCE_DIR}/src/)
 add_subdirectory(src/core)
 add_subdirectory(src/cartridge)
 add_subdirectory(src/emulator)
+add_subdirectory(src/platform)
 
-target_link_libraries(BoomBoy PRIVATE gb_core gb_cartridge gb_emulator)
+target_link_libraries(BoomBoy PRIVATE gb_core gb_cartridge gb_emulator gb_platform)
 
 # ============================================================================
 # Tests

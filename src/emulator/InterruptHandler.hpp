@@ -3,17 +3,22 @@
 #include <cstddef>
 #include <cstdint>
 
+#include "IORegs.hpp"
+
 namespace gb {
 
 class Bus;
 
+enum class InterruptSource : uint8_t {
+    VBLANK = 0,
+    LCD,
+    Timer,
+    Serial,
+    Joypad,
+};
+
 class InterruptHandler {
    public:
-    struct Regs {
-        uint8_t IF;
-        uint8_t IE;
-    };
-
     static uint16_t interruptVector(uint8_t id);
 
     explicit InterruptHandler(Bus& bus);
@@ -21,6 +26,7 @@ class InterruptHandler {
     void write(uint16_t addr, std::byte val);
     [[nodiscard]] std::byte read(uint16_t addr) const;
 
+    void toggleInterrupt(InterruptSource source);
     [[nodiscard]] bool hasPending() const;
     [[nodiscard]] uint8_t getNextPending() const;
     void clearFlag(uint8_t id);
@@ -29,7 +35,7 @@ class InterruptHandler {
 
    private:
     Bus& m_bus;
-    Regs m_regs{};
+    InterruptRegs m_regs{};
 };
 
 }  // namespace gb

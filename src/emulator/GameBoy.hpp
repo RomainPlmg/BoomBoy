@@ -8,6 +8,7 @@
 #include "RAM.hpp"
 #include "SerialLink.hpp"
 #include "Timer.hpp"
+#include "ppu/PPU.hpp"
 
 namespace gb {
 
@@ -23,6 +24,7 @@ class GameBoy {
     [[nodiscard]] SerialLink& serialLink() { return m_serialLink; }
     [[nodiscard]] InterruptHandler& interruptHandler() { return m_interruptHandler; }
     [[nodiscard]] const CPU& cpu() const { return m_cpu; }
+    [[nodiscard]] const PPU& ppu() const { return m_ppu; }
 
    private:
     Cartridge m_cartridge;
@@ -34,6 +36,7 @@ class GameBoy {
     Bus m_bus;
     InterruptHandler m_interruptHandler;
     Timer m_timer;
+    PPU m_ppu;
     CPU m_cpu;
 };
 

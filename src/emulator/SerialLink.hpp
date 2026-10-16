@@ -4,15 +4,15 @@
 #include <cstdint>
 #include <functional>
 
+#include "IORegs.hpp"
+
 namespace gb {
+
+class InterruptHandler;
 
 class SerialLink {
    public:
-    struct Regs {
-        uint8_t SB;
-        uint8_t SC;
-    };
-
+    SerialLink(InterruptHandler& interruptHandler) : m_interruptHandler(interruptHandler) {}
     using Callback = std::function<void(char c)>;
 
     void attachCallback(Callback cb);
@@ -23,8 +23,9 @@ class SerialLink {
     void tick();
 
    private:
+    InterruptHandler& m_interruptHandler;
     Callback m_cb;
-    Regs m_regs{};
+    SerialLinkRegs m_regs{};
     uint32_t m_clockCounter = 0;
     uint8_t m_bitCounter = 0;
     uint8_t m_currentCharacter = 0;

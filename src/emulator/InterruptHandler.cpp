@@ -29,6 +29,8 @@ std::byte InterruptHandler::read(uint16_t addr) const {
     return std::byte(0xFF);
 }
 
+void InterruptHandler::toggleInterrupt(InterruptSource source) { m_regs.IF |= (1 << static_cast<uint8_t>(source)); }
+
 bool InterruptHandler::hasPending() const { return (m_regs.IE & m_regs.IF & 0x1F) != 0; }
 
 uint8_t InterruptHandler::getNextPending() const {

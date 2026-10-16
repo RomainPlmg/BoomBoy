@@ -5,11 +5,12 @@
 #include "RAM.hpp"
 #include "SerialLink.hpp"
 #include "Timer.hpp"
+#include "ppu/PPU.hpp"
 
 namespace gb {
 
 Bus::Bus(Cartridge& cartridge, WRAM& wram, HRAM& hram, VRAM& vram, OAM& oam, InterruptHandler& interruptHandler,
-         Timer& timer, SerialLink& serialLink)
+         Timer& timer, PPU& ppu, SerialLink& serialLink)
     : m_cartridge(cartridge),
       m_wram(wram),
       m_hram(hram),
@@ -17,6 +18,7 @@ Bus::Bus(Cartridge& cartridge, WRAM& wram, HRAM& hram, VRAM& vram, OAM& oam, Int
       m_oam(oam),
       m_interruptHandler(interruptHandler),
       m_timer(timer),
+      m_ppu(ppu),
       m_serialLink(serialLink) {}
 
 std::byte Bus::read(uint16_t addr) {
@@ -36,6 +38,8 @@ std::byte Bus::read(uint16_t addr) {
         value = m_timer.read(addr);
     } else if (addr == 0xFF0Fu || addr == 0xFFFFu) {
         value = m_interruptHandler.read(addr);
+    } else if (addr >= 0xFF40u && addr <= 0xFF4Bu) {
+        value = m_ppu.read(addr);
     } else if (addr >= 0xFF80u && addr <= 0xFFFEu) {
         value = m_hram.read(addr);
     }
@@ -59,6 +63,8 @@ void Bus::write(uint16_t addr, std::byte val) {
         m_timer.write(addr, val);
     } else if (addr == 0xFF0Fu || addr == 0xFFFFu) {
         m_interruptHandler.write(addr, val);
+    } else if (addr >= 0xFF40u && addr <= 0xFF4Bu) {
+        m_ppu.write(addr, val);
     } else if (addr >= 0xFF80u && addr <= 0xFFFEu) {
         m_hram.write(addr, val);
     }
@@ -71,7 +77,7 @@ void Bus::tick(uint32_t nb) {
         m_ticks++;
         m_serialLink.tick();
         m_timer.tick();
-        // PPU.tick();
+        m_ppu.tick();
         // APU.tick();
         // etc.
     }

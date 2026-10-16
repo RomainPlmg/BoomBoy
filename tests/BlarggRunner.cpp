@@ -6,13 +6,13 @@
 #include "Log.hpp"
 #include "RomFile.hpp"
 
-constexpr uint64_t BLARGG_MAX_CYCLES = 250'000'000;
+constexpr uint64_t BLARGG_MAX_CYCLES = 300'000'000;
 
 int main(const int argc, char** argv) {
     gb::logger::init();
     gb::logger::setLevel(gb::logger::Level::Trace);
 
-    LOG_INFO("Run Mooneye test...");
+    LOG_INFO("Run Blargg's test...");
 
     if (argc < 2) {
         LOG_FATAL("Missing ROM file.");

@@ -1,15 +1,10 @@
 #include "SerialLink.hpp"
 
-#include <iostream>
 #include <utility>
 
-namespace gb {
+#include "InterruptHandler.hpp"
 
-enum SCBit : uint8_t {
-    ClockSelect = 1 << 0,
-    ClockSpeed = 1 << 1,
-    TransferEnable = 1 << 7,
-};
+namespace gb {
 
 void SerialLink::attachCallback(Callback cb) { m_cb = std::move(cb); }
 
@@ -36,8 +31,8 @@ std::byte SerialLink::read(uint16_t addr) const {
 }
 
 void SerialLink::tick() {
-    const auto transfertActive = (m_regs.SC & SCBit::TransferEnable);
-    const auto internalClock = (m_regs.SC & SCBit::ClockSelect);
+    const auto transfertActive = (m_regs.SC & SerialLink_SC_TransferEn_Msk);
+    const auto internalClock = (m_regs.SC & SerialLink_SC_ClockSel_Msk);
 
     if (!transfertActive || !internalClock) return;
 
@@ -52,8 +47,9 @@ void SerialLink::tick() {
     if (m_bitCounter < 8) return;
 
     m_bitCounter = 0;
-    m_regs.SC &= ~(SCBit::TransferEnable);  // Clear Tranfert Flag
-    if (m_cb) m_cb(static_cast<char>(m_currentCharacter));
+    m_regs.SC &= ~(SerialLink_SC_TransferEn_Msk);  // Clear Tranfert Flag
+    m_interruptHandler.toggleInterrupt(InterruptSource::Serial);
+    if (m_cb) m_cb(static_cast<char>(m_currentCharacter));  // Execute callback
 }
 
 }  // namespace gb

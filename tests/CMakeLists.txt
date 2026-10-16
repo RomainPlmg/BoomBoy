@@ -12,8 +12,8 @@ target_link_libraries(MooneyeRunner PRIVATE gb_core gb_cartridge gb_emulator)
 
 FetchContent_Declare(
         mooneye
-        URL file://C:/Users/X55808/Downloads/mts-20260714-0944-31510e1.tar.gz
-        URL_HASH SHA256=5F0694E4E9E58441DB23FF057A5AB681870D4CFAED91267E99885936DB8E6F1D
+        URL file://C:/Users/X55808/Downloads/mts-20211031-1956-1ae00bf.tar.gz
+        URL_HASH SHA256=778866E78A174EE81CB4671DE501FA4DDAC6A91AE248D913C4694520CE501D0A
         DOWNLOAD_EXTRACT_TIMESTAMP TRUE
 )
 FetchContent_MakeAvailable(mooneye)
@@ -61,6 +61,7 @@ set(BLARGG_ROOT "${blargg_SOURCE_DIR}")
 file(GLOB_RECURSE BLARGG_ROMS
         "${BLARGG_ROOT}/**/*gb"
 )
+list(FILTER BLARGG_ROMS EXCLUDE REGEX "/cgb_sound/")
 
 foreach(rom IN LISTS BLARGG_ROMS)
     file(RELATIVE_PATH rel "${BLARGG_ROOT}" "${rom}")

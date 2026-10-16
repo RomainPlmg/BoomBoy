@@ -3,21 +3,15 @@
 #include <cstddef>
 #include <cstdint>
 
+#include "IORegs.hpp"
+
 namespace gb {
 
-class Bus;
+class InterruptHandler;
 
 class Timer {
    public:
-    struct Regs {
-        uint16_t div16 = 0;
-        uint8_t div = 0;
-        uint8_t tima = 0;
-        uint8_t tma = 0;
-        uint8_t tac = 0;
-    };
-
-    Timer(Bus& bus);
+    Timer(InterruptHandler& interruptHandler);
 
     void tick();
     void reset();
@@ -26,8 +20,9 @@ class Timer {
     [[nodiscard]] std::byte read(uint16_t addr) const;
 
    private:
-    Bus& m_bus;
-    Regs m_regs{};
+    InterruptHandler& m_interruptHandler;
+    TimerRegs m_regs{};
+    uint16_t m_div16Bits = 0;
 };
 
 }  // namespace gb

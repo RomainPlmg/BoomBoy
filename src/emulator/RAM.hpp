@@ -35,6 +35,9 @@ class VRAM {
     void write(uint16_t addr, std::byte val);
 
    private:
+    friend class Tile;
+    friend class TileMap;
+
     std::vector<std::byte> m_data;
 };
 
