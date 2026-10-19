@@ -1,4 +1,3 @@
-#include <atomic>
 #include <iostream>
 #include <thread>
 
@@ -7,7 +6,8 @@
 #include "Log.hpp"
 #include "RomFile.hpp"
 #include "Window.hpp"
-#include "Framebuffer.hpp"
+
+constexpr auto FRAME_DURATION = std::chrono::nanoseconds((1'000'000'000LL * gb::CYCLES_PER_FRAME) / gb::CPU_FREQ);
 
 static void serialLinkCB(char c) { std::cout << c; }
 
@@ -32,21 +32,25 @@ int main(const int argc, char** argv) {
         return EXIT_FAILURE;
     }
 
-    std::atomic running = true;
-    gb::GameBoy gameBoy(std::move(cartridgeExp.value()));
-    gameBoy.serialLink().attachCallback(serialLinkCB);
-    std::thread emulThread([&] {
-        while (running) { gameBoy.step(); };
-    });
+    auto bootRom = gb::BootRom::load("../vendor/bootix_dmg.bin");
+
+    gb::GameBoy gameBoy(std::move(cartridgeExp.value()), std::move(bootRom.value()));
 
     gb::Window window;
+    using clock = std::chrono::steady_clock;
+    auto nextFrameTime = clock::now() + FRAME_DURATION;
+
     while (!window.shouldClose()) {
         window.pollEvents();
-        window.present(gameBoy.ppu().framebuffer());
-    }
-    running = false;
 
-    emulThread.join();
+        uint64_t currentFrame = gameBoy.ppu().frameCount();
+        while (gameBoy.ppu().frameCount() == currentFrame) gameBoy.step();
+
+        window.present(gameBoy.ppu().framebuffer());
+
+        std::this_thread::sleep_until(nextFrameTime);
+        nextFrameTime += FRAME_DURATION;
+    }
 
     return EXIT_SUCCESS;
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <optional>
 
 #include "Framebuffer.hpp"
 #include "IORegs.hpp"
@@ -28,11 +29,13 @@ class PPU {
     void tick();
 
     [[nodiscard]] const Framebuffer& framebuffer() const { return m_fb; }
+    [[nodiscard]] uint64_t frameCount() const { return m_frameCount; }
 
    private:
     void incrementLY();
     void renderScanline();
     void renderBGScanline();
+    void renderWindowScanline();
 
     VRAM& m_vram;
     InterruptHandler& m_interruptHandler;
@@ -40,6 +43,7 @@ class PPU {
     LCDRegs m_regs{};
     Mode m_currentMode = Mode::OAMSCAN;
     uint32_t m_dot = 0;
+    uint64_t m_frameCount = 0;
 };
 
 }  // namespace gb

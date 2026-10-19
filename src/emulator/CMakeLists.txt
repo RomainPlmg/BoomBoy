@@ -11,6 +11,7 @@ add_library(gb_emulator STATIC
         ppu/Tile.cpp
         ppu/TileMap.cpp
         ppu/PPU.cpp
+        BootRom.cpp
 )
 
 target_include_directories(gb_emulator PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

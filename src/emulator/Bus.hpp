@@ -5,6 +5,7 @@
 
 namespace gb {
 
+class BootRom;
 class Cartridge;
 class WRAM;
 class HRAM;
@@ -17,8 +18,8 @@ class PPU;
 
 class Bus {
    public:
-    Bus(Cartridge& cartridge, WRAM& wram, HRAM& hram, VRAM& vram, OAM& oam, InterruptHandler& interruptHandler,
-        Timer& timer, PPU& ppu, SerialLink& serialLink);
+    Bus(const BootRom& bootRom, Cartridge& cartridge, WRAM& wram, HRAM& hram, VRAM& vram, OAM& oam,
+        InterruptHandler& interruptHandler, Timer& timer, PPU& ppu, SerialLink& serialLink);
 
     [[nodiscard]] std::byte read(uint16_t addr);
     void write(uint16_t addr, std::byte val);
@@ -28,6 +29,7 @@ class Bus {
     [[nodiscard]] uint64_t getTicks() const { return m_ticks; }
 
    private:
+    const BootRom& m_bootRom;
     Cartridge& m_cartridge;
     WRAM& m_wram;
     HRAM& m_hram;
@@ -39,6 +41,7 @@ class Bus {
     SerialLink& m_serialLink;
 
     uint64_t m_ticks = 0;
+    bool m_bootRomEn = true;
 };
 
 }  // namespace gb

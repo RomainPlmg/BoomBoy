@@ -5,9 +5,10 @@
 
 namespace gb {
 
-GameBoy::GameBoy(Cartridge&& cartridge)
-    : m_cartridge(std::move(cartridge)),
-      m_bus(m_cartridge, m_wram, m_hram, m_vram, m_oam, m_interruptHandler, m_timer, m_ppu, m_serialLink),
+GameBoy::GameBoy(Cartridge&& cartridge, BootRom&& bootRom)
+    : m_bootRom(std::move(bootRom)),
+      m_cartridge(std::move(cartridge)),
+      m_bus(m_bootRom, m_cartridge, m_wram, m_hram, m_vram, m_oam, m_interruptHandler, m_timer, m_ppu, m_serialLink),
       m_interruptHandler(m_bus),
       m_serialLink(m_interruptHandler),
       m_timer(m_interruptHandler),

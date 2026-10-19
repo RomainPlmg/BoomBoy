@@ -19,7 +19,7 @@ void CPU::reset() {
     m_regs.h = 0x01;
     m_regs.l = 0x4D;
     m_regs.sp = 0xFFFE;
-    m_regs.pc = 0x0100;
+    m_regs.pc = 0x0000;
 
     m_interruptHandler.ime = false;
     m_requestIMEEn = false;

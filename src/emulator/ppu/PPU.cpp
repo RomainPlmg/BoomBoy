@@ -26,6 +26,10 @@ void PPU::write(uint16_t addr, std::byte val) {
         LOG_WARN("LY is read-only!");
     } else if (addr == 0xFF45) {
         m_regs.LYC = data;
+    } else if (addr == 0xFF4A) {
+        m_regs.WY = data;
+    } else if (addr == 0xFF4B) {
+        m_regs.WX = data;
     }
 }
 
@@ -44,6 +48,10 @@ void PPU::write(uint16_t addr, std::byte val) {
         val = std::byte(m_regs.LY);
     } else if (addr == 0xFF45) {
         val = std::byte(m_regs.LYC);
+    } else if (addr == 0xFF4A) {
+        val = std::byte(m_regs.WY);
+    } else if (addr == 0xFF4B) {
+        val = std::byte(m_regs.WX);
     }
 
     return val;
@@ -72,7 +80,6 @@ void PPU::tick() {
                 }
                 return;
             }
-            m_dot++;
             break;
         }
         case Mode::VBLANK: {
@@ -80,12 +87,12 @@ void PPU::tick() {
                 incrementLY();
                 m_dot = 0;
                 if (m_regs.LY == 153) {  // The last scanline
+                    m_frameCount++;      // Increment the number of generated frames
                     m_regs.LY = 0;       // Start a new frame
                     m_currentMode = Mode::OAMSCAN;
                 }
                 return;
             }
-            m_dot++;
             break;
         }
         case Mode::OAMSCAN: {
@@ -93,7 +100,6 @@ void PPU::tick() {
                 // TODO -> Evaluate sprites
                 m_currentMode = Mode::DRAW;
             }
-            m_dot++;
             break;
         }
         case Mode::DRAW: {
@@ -101,10 +107,11 @@ void PPU::tick() {
                 renderScanline();
                 m_currentMode = Mode::HBLANK;
             }
-            m_dot++;
             break;
         }
     }
+
+    m_dot++;
 }
 
 void PPU::incrementLY() {
@@ -126,9 +133,7 @@ void PPU::renderScanline() {
     // Check if Background & Window are enabled
     if (m_regs.LCDC & LCD_LCDC_BGWEn_Msk) {
         renderBGScanline();
-        if (m_regs.LCDC & LCD_LCDC_WindowEn_Msk) {
-            // TODO -> Render Window scanline
-        }
+        if (m_regs.LCDC & LCD_LCDC_WindowEn_Msk) { renderWindowScanline(); }
     }
 
     if (m_regs.LCDC & LCD_LCDC_OBJEn_Msk) {
@@ -137,7 +142,7 @@ void PPU::renderScanline() {
 }
 
 void PPU::renderBGScanline() {
-    // Calculate the top left & corner of the background area
+    // Calculate the top left corner of the background area
     Point topLeft = {m_regs.SCX, m_regs.SCY};
 
     // Calculate the line number of the background to render
@@ -145,9 +150,22 @@ void PPU::renderBGScanline() {
     pixelCoord.y = (topLeft.y + m_regs.LY) % 256;
 
     for (uint16_t x = 0; x < 160; x++) {
-        pixelCoord.x = x + topLeft.x;
+        pixelCoord.x = (x + topLeft.x) % 256;
         auto color = TileMap::getBackgroundPixelColor(m_vram, m_regs, pixelCoord);
         m_fb.setPixel(x, m_regs.LY, static_cast<uint8_t>(color));
+    }
+}
+
+void PPU::renderWindowScanline() {
+    for (uint16_t x = 0; x < 160; x++) {
+        Point coord = {x, m_regs.LY};
+        auto color = TileMap::getWindowPixelColor(m_vram, m_regs, coord);
+
+        Point targetPixelCoord{};
+        targetPixelCoord.x = x + m_regs.WX - 7;
+        targetPixelCoord.y = m_regs.LY + m_regs.WY;
+
+        m_fb.setPixel(targetPixelCoord.x, targetPixelCoord.y, static_cast<uint8_t>(color));
     }
 }
 

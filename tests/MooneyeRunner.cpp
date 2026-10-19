@@ -30,7 +30,8 @@ int main(const int argc, char** argv) {
         return EXIT_FAILURE;
     }
 
-    gb::GameBoy gameBoy(std::move(cartridgeExp.value()));
+    auto bootRom = gb::BootRom::load("../vendor/bootix_dmg.bin");
+    gb::GameBoy gameBoy(std::move(cartridgeExp.value()), std::move(bootRom.value()));
 
     uint32_t cycles = 0;
     while (cycles < MOONEYE_MAX_CYCLES) {

@@ -18,10 +18,10 @@ struct Color {
 };
 
 static std::vector<Color> colorPalette = {
-    {8, 24, 32, 255},
-    {52, 104, 86, 255},
-    {136, 192, 112, 255},
     {224, 248, 208, 255},
+    {136, 192, 112, 255},
+    {52, 104, 86, 255},
+    {8, 24, 32, 255},
 };
 
 static SDL_FRect computeDestRect(int windowWidth, int windowHeight, int textureWidth, int textureHeight) {
@@ -91,9 +91,7 @@ void Window::present(const Framebuffer& fb) {
 
     assert(fb.data().size() == m_buffer.size() && "Framebuffer and destination texture don't have the same size.");
 
-    for (size_t i = 0; i < pixels.size(); ++i) {
-        m_buffer[i] = std::bit_cast<uint32_t>(colorPalette[pixels[i]]);
-    }
+    for (size_t i = 0; i < pixels.size(); ++i) { m_buffer[i] = std::bit_cast<uint32_t>(colorPalette[pixels[i]]); }
 
     SDL_UpdateTexture(m_texture, nullptr, m_buffer.data(), 160 * sizeof(uint32_t));
 

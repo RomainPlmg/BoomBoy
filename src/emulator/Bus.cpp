@@ -1,5 +1,6 @@
 #include "Bus.hpp"
 
+#include "BootRom.hpp"
 #include "CPU.hpp"
 #include "Cartridge.hpp"
 #include "RAM.hpp"
@@ -9,9 +10,10 @@
 
 namespace gb {
 
-Bus::Bus(Cartridge& cartridge, WRAM& wram, HRAM& hram, VRAM& vram, OAM& oam, InterruptHandler& interruptHandler,
-         Timer& timer, PPU& ppu, SerialLink& serialLink)
-    : m_cartridge(cartridge),
+Bus::Bus(const BootRom& bootRom, Cartridge& cartridge, WRAM& wram, HRAM& hram, VRAM& vram, OAM& oam,
+         InterruptHandler& interruptHandler, Timer& timer, PPU& ppu, SerialLink& serialLink)
+    : m_bootRom(bootRom),
+      m_cartridge(cartridge),
       m_wram(wram),
       m_hram(hram),
       m_vram(vram),
@@ -25,7 +27,11 @@ std::byte Bus::read(uint16_t addr) {
     std::byte value{0xFF};
 
     if (addr <= 0x7FFFu || (addr >= 0xA000u && addr <= 0xBFFFu)) {
-        value = m_cartridge.read(addr);
+        if (addr < 0x0100 && m_bootRomEn) {  // Read Boot Rom
+            value = m_bootRom.data()[addr];
+        } else {
+            value = m_cartridge.read(addr);
+        }
     } else if (addr >= 0X8000u && addr <= 0x9FFFu) {
         value = m_vram.read(addr);
     } else if (addr >= 0xC000u && addr <= 0xDFFFu) {
@@ -65,6 +71,8 @@ void Bus::write(uint16_t addr, std::byte val) {
         m_interruptHandler.write(addr, val);
     } else if (addr >= 0xFF40u && addr <= 0xFF4Bu) {
         m_ppu.write(addr, val);
+    } else if (addr == 0xFF50 && m_bootRomEn && val != std::byte{0}) {  // BootRom mapping control
+        m_bootRomEn = false;
     } else if (addr >= 0xFF80u && addr <= 0xFFFEu) {
         m_hram.write(addr, val);
     }

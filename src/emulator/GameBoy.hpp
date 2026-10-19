@@ -2,6 +2,7 @@
 
 #include <cstdint>
 
+#include "BootRom.hpp"
 #include "Bus.hpp"
 #include "CPU.hpp"
 #include "Cartridge.hpp"
@@ -12,11 +13,12 @@
 
 namespace gb {
 
-class Cartridge;
+constexpr uint32_t CPU_FREQ = 4194304;
+constexpr uint32_t CYCLES_PER_FRAME = 70224;
 
 class GameBoy {
    public:
-    explicit GameBoy(Cartridge&& cartridge);
+    explicit GameBoy(Cartridge&& cartridge, BootRom&& bootRom);
 
     uint32_t step();
 
@@ -27,6 +29,7 @@ class GameBoy {
     [[nodiscard]] const PPU& ppu() const { return m_ppu; }
 
    private:
+    BootRom m_bootRom;
     Cartridge m_cartridge;
     SerialLink m_serialLink;
     WRAM m_wram;

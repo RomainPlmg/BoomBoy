@@ -28,15 +28,15 @@ DMGPixelColor TileMap::getBackgroundPixelColor(const VRAM& vram, const LCDRegs& 
     return getPixelColor(vram, regs, data, coord);
 }
 
-DMGPixelColor TileMap::getWindowColor(const VRAM& vram, const LCDRegs& regs, Point coord) {
+DMGPixelColor TileMap::getWindowPixelColor(const VRAM& vram, const LCDRegs& regs, Point coord) {
     auto data = window(vram, regs);
     return getPixelColor(vram, regs, data, coord);
 }
 
 DMGPixelColor TileMap::getPixelColor(const VRAM& vram, const LCDRegs& regs, std::span<const std::byte, 1024> data,
                                      Point coord) {
-    assert(coord.x < 256 && "Requested X coordinate is outside the tile. TileMaps are 256*256 pixels");
-    assert(coord.y < 256 && "Requested Y coordinate is outside the tile. Tile are 256*256 pixels");
+    assert(coord.x < 256 && "Requested X coordinate is outside the tilemap. TileMaps are 256*256 pixels");
+    assert(coord.y < 256 && "Requested Y coordinate is outside the tilemap. Tile are 256*256 pixels");
 
     Point tileCoord(coord.x / 8, coord.y / 8);
     size_t tileIdx = tileCoord.x + tileCoord.y * 32;  // 32 tiles per tilemap

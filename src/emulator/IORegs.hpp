@@ -40,6 +40,8 @@ struct LCDRegs {
     uint8_t SCX;  /**< Background viewport X position */
     uint8_t LY;   /**< LCD Y coordinate [read-only] */
     uint8_t LYC;  /**< LY compare */
+    uint8_t WY;   /**< Window Y position */
+    uint8_t WX;   /**< Window X position + 7 */
 };
 
 constexpr uint8_t LCD_LCDC_BGWEn_Pos = 0;
@@ -122,7 +124,7 @@ constexpr uint8_t Timer_TAC_En(bool value) { return Timer_TAC_En_Msk & (value <<
 /* Interrupts                       */
 /************************************/
 struct InterruptRegs {
-    uint8_t IE;  /**< Interrupt enable */
+    uint8_t IE; /**< Interrupt enable */
     uint8_t IF; /**< Interrupt flag */
 };
 
